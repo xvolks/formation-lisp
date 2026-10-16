@@ -250,9 +250,45 @@
     )
   )
 
+;; Episode `Rotating the region'
+
+(defun rotate-interactive (n)
+  "Interactive version of rot13. `N' est la rotation à appliquer (13 par défaut).  Donné par \\[universal-argument] avant \\[rotate-interactive]."
+  (interactive "P")
+  (let ((offset (if n n 13)))
+    (if mark-active
+        (let*
+            ((s (buffer-substring-no-properties (point) (mark)))
+             (rotated-text (rot s offset)))
+          (kill-region (point) (mark))
+          (insert rotated-text))
+
+      (let*
+          ((s (word-at-point))
+           (orotated-text (rot s offset)))
+        (backward-word 1)
+        (kill-word 1)
+        (insert orotated-text)) ;; original code
+      )
+    )
+  )
+
+
+
+(print mark-active)
 
 ;; hello --> rot13 --> uryyb
+;; block mode 1 --> oybpx zbqr 6
+;; block mode 2 --> oybpx zbqr 7
 ;; hello --> rot10 --> rovvy
+;; hallo --> rot10 --> rkvvy
+;; hullo --> rot10 --> revvy
+;; hillo --> rot10 --> rsvvy
 ;; (rotate-interactive 13)
+
+
+;; Regular Expressions
+
+
 
 ;;; playground.el ends here
