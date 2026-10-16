@@ -288,6 +288,30 @@
 
 
 ;; Regular Expressions
+;; Impossible de faire fonctionner le ou \| comme dans la vidéo :(
+
+;; Dates au format américain (mm/dd/YYYY)
+;; 10/15/1975
+;; 3/6/22
+
+;; Version simple, ne gère pas les dates invalides comme 1/1/123
+;; ([0-9]+)/([0-9]+)/([0-9]+)
+;; Il faut échaper les paranthèses bizarrement ?!
+;; \([0-9]+\)/\([0-9]+\)/\([0-9]+\)
+;; Valeur de remplacement: \2-\1-\3
+;;
+;; Dates au format américain remplacées
+;; 15-10-1975
+;; 6-3-22
+
+;; Tests avec des signatures de fonctions C.
+;; int funname (int a, double b) {}
+;; double my_function2(int a, double b) {}
+
+;; Première version, il manque beaucoup de choses
+;; \([a-z]+\)[ \t]+\([A-Z_a-z0-9]+\)[ \t]?(\(.*\))
+
+;; 
 
 
 
