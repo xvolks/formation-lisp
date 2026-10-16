@@ -90,7 +90,7 @@
   (* x x))
 
 ;; Ne fonctionne pas car il "pense" que carre n'est pas une variable.
-(mapcar carre '(1 2 3 4 5))
+;; (mapcar carre '(1 2 3 4 5))
 
 ;; Force `carre' à être reconnue en tant que fonction et non en tant que variable.
 ;;       /---- le #' force `carre' en tant que fonction.
@@ -190,5 +190,28 @@
     (message "GOOD: double rot13 donne la même entrée: %s" (rot13 (rot13 xvolks)))
   (message "BAD: double rot13 a donné un résultat inattendu: %s" (rot13 (rot13 xvolks))))
 
- 
+;; (defun rotate-interactive ()
+;;   "Interactive version of rot13."
+;;   (interactive)
+;;   (let ((s (thing-at-point 'line)))
+;;     (print s)
+;;     )
+;;   )
+(defun rotate-interactive ()
+  "Interactive version of rot13. Ne fonctionne pas si le curseur est sur la premiere lettre du mot."
+  (interactive)
+  (let* ((s (word-at-point))      ; `let*' contrairement à `let' permet d'utiliser les variables définies dans le bloc.
+        (rotated-text (rot13 s))
+        )
+    (backward-word 1)
+    (kill-word 1)
+    (insert rotated-text)
+    )
+  )
+
+;; En tant que cmd interactive, elle est dispo dans M-x rotate-interactive
+;; et on peut l'invoquer par un (ou plusieurs) raccourci clavier.
+(keymap-local-set "C-c r" 'rotate-interactive)
+(keymap-local-set "C-c C-r" 'rotate-interactive)
+
 ;;; playground.el ends here
