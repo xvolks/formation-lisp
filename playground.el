@@ -214,4 +214,45 @@
 (keymap-local-set "C-c r" 'rotate-interactive)
 (keymap-local-set "C-c C-r" 'rotate-interactive)
 
+
+(defun ft (n)
+  "Fonction de test.  Soit on lui passe `N' en arg, soit Emacs demande sa valeur, si invoqué via \\[ft]."
+  (interactive "N")
+  (print n))
+
+(ft)
+(ft 6)
+(print "ptp")
+
+
+(defun rot (s offset)
+  "Fonction rot pour une chaine S avec l'`OFFSET' pour uniquement [a-z][A-Z]."
+  (concat (mapcar (lambda (c)
+                    (cond
+                     ((and (>= c ?a) (<= c ?z)) (rotate ?a c offset 26))
+                     ((and (>= c ?A) (<= c ?Z)) (rotate ?A c offset 26))
+                     ((and (>= c ?0) (<= c ?9)) (rotate ?0 c 5 10))
+                     (t c)
+                     )
+                  ) s))
+  )
+
+(defun rotate-interactive (n)
+  "Interactive version of rot13. `N' est la rotation à appliquer (13 par défaut).  Donné par \\[universal-argument] avant \\[rotate-interactive]."
+  (interactive "P")
+  (let* ((offset (if n n 13))
+         (s (word-at-point))      ; `let*' contrairement à `let' permet d'utiliser les variables définies dans le bloc.
+        (rotated-text (rot s offset))
+        )
+    (backward-word 1)
+    (kill-word 1)
+    (insert rotated-text)
+    )
+  )
+
+
+;; hello --> rot13 --> uryyb
+;; hello --> rot10 --> rovvy
+;; (rotate-interactive 13)
+
 ;;; playground.el ends here
