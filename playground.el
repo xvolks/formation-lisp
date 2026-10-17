@@ -374,11 +374,12 @@
 (defun header-parse-params (line)
   "Découpe `LINE' sur la chaine ', ', mappe chaque texte avec le format.  Retourne une liste de chaines."
   (mapcar (lambda (x) (format " * @param %s\n" x))
-          (string-split line ", "))) 
+          (string-split line ", ")))
 
 (header-parse-params "int a, double d, char c")
 
 (defun function-header ()
+  "Créé une documentation type Javadoc sur une fonction très basique de type `C'."
   (interactive)
   (save-excursion                     ; or (search-backward ...)
     (beginning-of-line)
@@ -403,8 +404,9 @@
     )
   )
 
-;; (keymap-global-set "M-c" 'function-header) 
+;; (keymap-global-set "M-c" 'function-header)
 
 ;; 
+
 ;;; playground.el ends here
  
