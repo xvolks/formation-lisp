@@ -4,6 +4,8 @@
 ;; Support: https://www.youtube.com/@mzamansky/videos
 ;;; Code:
 
+(lisp-interaction-mode)
+
 ;; Variable definition
 (defvar ops)
 (setq ops '(+ 1 2))
@@ -220,7 +222,7 @@
   (interactive "N")
   (print n))
 
-(ft)
+;; (ft)
 (ft 6)
 (print "ptp")
 
@@ -310,9 +312,59 @@
 
 ;; Première version, il manque beaucoup de choses
 ;; \([a-z]+\)[ \t]+\([A-Z_a-z0-9]+\)[ \t]?(\(.*\))
+;; Dans la vidéo il utilise regex-builder, ici j'ai utilisé replace-regexp
 
-;; 
+;; Regex part 2
+
+;; Construction de regex avec la macro `rx'.
+
+(rx
+ (any "a-z")                        ; [a-z]
+ )
+
+(rx
+ (group (one-or-more (any "a-z"))   ; \\([a-z]+
+        "ZAP"                       ; ZAP
+        (one-or-more digit)))       ; "\\([a-z]+ZAP[[:digit:]]+\\)"
+
+;; xr permet de faire l'inverse (le package `xr' doit être installé: M-x package-install xr)
+(xr-pp "\\([a-z]+ZAP[[:digit:]]+\\)")(group (one-or-more (any "a-z")) "ZAP" (one-or-more digit))
+  ; (group (one-or-more (any "a-z")) "ZAP" (one-or-more digit))
 
 
+(setq INHIBIT-MODIFY nil)
+(boundp 'INHIBIT-MODIFY)
+
+(if (and (boundp 'INHIBIT-MODIFY) INHIBIT-MODIFY)
+    (print "match-string va probablement foirer")
+  (print "ok, INHIBIT-MODIFY est void ou nil, match-string devrait fonctionner!")
+  )
+
+;; Region start
+(setq regex "\\([a-z0-9]+\\) +\\([a-zA-Z0-9_]+\\)(\\([a-zA-Z0-9_ ,]+\\))")
+(setq line " int add_two(int a, int b)")
+
+(string-match regex line)
+(setq ret (match-string 1 line))
+(setq fun (match-string 2 line))
+(setq par (match-string 3 line))
+
+(insert ret)
+(insert " ")
+(insert fun)
+(insert "(")
+(insert par)
+(insert ")")
+
+;; Region stop
+;; M-x eval-region --> int add_two(int a, int b)
+
+;; Impossible d'évaluer ligne par ligne à cause de l'état global de la regex,
+;;   modifié entre 2 lignes par le paramétrage d'Emacs (sauf si rien ne tourne?)
+
+;; Utilisation de la fonction format
+(format "fn %s(%s) -> %s" fun par ret)   ; "fn add_two(int a, int b) -> int"
+
+;;
 
 ;;; playground.el ends here
