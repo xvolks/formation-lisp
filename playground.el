@@ -406,7 +406,48 @@
 
 ;; (keymap-global-set "M-c" 'function-header)
 
-;; 
+;; Built-in data structures
+;; Utilisation du pkg Eros (Evaluation Result OverlayS for Emacs Lisp)
+(eros-mode)
+
+(+ 2 3)
+
+;; Listes
+;; Structure basique nommée Cons (la bse quoi).
+(setq cons1 (cons #'+ (cons 1 (cons 2 (cons 3 '())))))  ; Ne pas oublier la liste vide (nullptr en C++) à la fin.
+(setq cons2 (cons  '+ (cons 1 (cons 2 (cons 3 '())))))  ; Quelle difference si on ne met pas le # ?
+(setq cons3 (cons 2 3))                                 ; Paire aussi notée (2 . 3)
+(type-of cons1)                                         ; cons
+(type-of cons2)                                         ; cons
+(type-of cons3)                                         ; cons
+
+;; Vecteurs
+(setq v1 ["un" "deux" "trois" "quatre"])
+(type-of v1)                                            ; vector
+(aref v1 1)                                             ; deux
+(aset v1 1 "two")                                       ; two
+v1                                                      ; ["un" "two" "trois" "quatre"]
+(setq v2 [1 2 3 4 5])                                   ; [1 2 3 4 5]
+(mapcar #'1+ v2)                                        ; (2 3 4 5 6) <- transformé en list
+(type-of (mapcar #'1+ v2))                              ; cons        <- verifié: cons et non vector
+
+;; Hashtables
+(setq h (make-hash-table :test 'equal))                 ; crée une hashtable vide avec la fonction de test -> equal
+(gethash "test-key" h)                                  ; nil         <- la table est vide
+(puthash "test-key" v1 h)                               ; ajoute le vecteur v1 sous la clef "test-key"
+(gethash "test-key" h)                                  ; ["un" "two" "trois" "quatre"]
+
+;; Liste de paires (mot clef `assoc') -> voir la doc, beaucoup de functions utiles.
+(setq map '( ("a" . 10) ("b" . 11) ("c" . 12) ("d" . 13) ("e" . 14) ("f" . 15)))
+(assoc "a" map)                                         ; ("a" . 10)
+(cdr (assoc "c" map))                                   ; 12
+
+;; On peut se passer du point, mais dans ce cas, le résultat de `cdr' sera une liste d'un élément.
+;; Ce n'est donc pas totalement interchangeable.
+(setq mop '( ("a"   10) ("b"   11) ("c"   12) ("d"   13) ("e"   14) ("f"   15)))
+(assoc "a" mop)                                         ; ("a" 10)
+(cdr (assoc "c" mop))                                   ; (12)
+
+;;
 
 ;;; playground.el ends here
- 
