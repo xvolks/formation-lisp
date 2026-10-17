@@ -341,8 +341,8 @@
   )
 
 ;; Region start
-(setq regex "\\([a-z0-9]+\\) +\\([a-zA-Z0-9_]+\\)(\\([a-zA-Z0-9_ ,]+\\))")
 (setq line " int add_two(int a, int b)")
+(setq regex "\\([a-z0-9]+\\) +\\([a-zA-Z0-9_]+\\)(\\([a-zA-Z0-9_ ,]+\\))")
 
 (string-match regex line)
 (setq ret (match-string 1 line))
@@ -365,6 +365,46 @@
 ;; Utilisation de la fonction format
 (format "fn %s(%s) -> %s" fun par ret)   ; "fn add_two(int a, int b) -> int"
 
-;;
+;; Regex Conclusion
 
+;; Test signature
+
+;; int add_two(int a, int b)
+
+(defun header-parse-params (line)
+  "Découpe `LINE' sur la chaine ', ', mappe chaque texte avec le format.  Retourne une liste de chaines."
+  (mapcar (lambda (x) (format " * @param %s\n" x))
+          (string-split line ", "))) 
+
+(header-parse-params "int a, double d, char c")
+
+(defun function-header ()
+  (interactive)
+  (save-excursion                     ; or (search-backward ...)
+    (beginning-of-line)
+    (set-mark (point))
+    (end-of-line)
+    (let* (
+           (line (buffer-substring-no-properties (mark) (point)))
+           (regex "\\([a-z0-9]+\\) +\\([a-zA-Z0-9_]+\\)(\\([a-zA-Z0-9_ ,]+\\))")
+           (index (string-match regex line))
+           (ret (match-string 1 line))
+           (fun (match-string 2 line))
+           (par (match-string 3 line))
+           (header1 (format "\n/** <p>Description </p>\n * @name: %s\n *\n" fun))
+           (header2 (format "%s\n" (string-join (header-parse-params par))))
+           (header3 (format " * @returns %s \n *\n */\n" ret))
+           (header (format "%s%s%s" header1 header2 header3))
+           )
+      (beginning-of-line)
+      (insert header)
+                                       ; (search-backward "Descrip")
+      )
+    )
+  )
+
+;; (keymap-global-set "M-c" 'function-header) 
+
+;; 
 ;;; playground.el ends here
+ 
