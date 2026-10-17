@@ -448,6 +448,7 @@ v1                                                      ; ["un" "two" "trois" "q
 (assoc "a" mop)                                         ; ("a" 10)
 (cdr (assoc "c" mop))                                   ; (12)
 
-;;
+;; Emoji Replace part 1
+;; c.f. voir le fichier emoji-replace.el
 
 ;;; playground.el ends here
