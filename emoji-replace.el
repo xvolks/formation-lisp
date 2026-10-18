@@ -64,6 +64,8 @@
 
 ;; Emoji replace part 2 - hooks
 (defun trigger-emoji-replace-insert (begin end len)
+  "Remplace un tag d'emoji par cet emoji.  La position du tag est donnée par `BEGIN' et `END',  `LEN' est inutilisé.
+Doit être dans la liste `emoji-list'.  Exemple: `:gnu: ' est remplacé par 🐃."
   ;; (message "beg: %s, end: %d, len: %d" begin end len)
   (let ((s (buffer-substring begin end)))
     (when (equal s " ")
@@ -90,7 +92,8 @@
 ;; (point)                                 ; 3508
 
 (defun emoji-replace-overlay (begin end len)
-  "Remplace un tag d'emoji par cet emoji visuellement.  Doit être dans la liste `emoji-list'.  Exemple: `:gnu: ' est remplacé par 🐃."
+  "Remplace un tag d'emoji par cet emoji visuellement.  La position du tag est donnée par `BEGIN' et `END',  `LEN' est inutilisé.
+Doit être dans la liste `emoji-list'.  Exemple: `:gnu: ' est remplacé par 🐃."
   (let ((s (buffer-substring begin end)))
     (when (equal s " ")
       (save-excursion
@@ -118,7 +121,7 @@
 
 (define-minor-mode
   emoji-replace-mode
-  "Simple mode that replaces the known :emojis: by their graphic version"
+  "Simple mode that replaces the known :emojis: by their graphic version."
   :lighter " 😎"             ; mode status in mode line
   (if emoji-replace-mode
       (add-hook 'after-change-functions #'trigger-emoji-replace-insert nil t)
@@ -133,15 +136,15 @@
 ;; Cleaning up our emoji mode
 
 (defvar emoji-replace-by-insert nil
-  "nil -> replace with overlay, t -> replace by insert")
+  "Nil -> replace with overlay, t -> replace by insert.")
 (defcustom emoji-replace-by-insert nil
-  "nil -> replace with overlay, t -> replace by insert")   ; M-x customize-variable permet de modifier les variables par défaut.
+  "Nil -> replace with overlay, t -> replace by insert.")   ; M-x customize-variable permet de modifier les variables par défaut.
 (symbol-value emoji-replace-by-insert)
 
 
 (define-minor-mode
   emoji-replace-mode
-  "Simple mode that replaces the known :emojis: by their graphic version"
+  "Simple mode that replaces the known :emojis: by their graphic version."
   :lighter " 😎"             ; mode status in mode line
   (let ((func (if emoji-replace-by-insert
                   #'trigger-emoji-replace-insert
