@@ -81,7 +81,6 @@
 ;;  )
 ;; The 👻 is talking to the 🐘.
 
-
 ;; Emoji replace part 3 - text properties
 ;; l'overlay est juste une décoration sur le texte, mais il me modifie pas le buffer
 ;; dans cet exemple, si je tape  :whale: , je vois une baleine mais le texte :whale: est toujours là.
@@ -112,8 +111,24 @@
 
 
 ;; (add-hook 'after-change-functions #'emoji-replace-overlay nil t)
-;; (remove-hook 'after-change-functions #'emoji-replace-overlay)
+;; (remove-hook 'after-change-functions #'emoji-replace-overlay t)
 
-;;
+;; A minor mode
+;; Le but est de créer un mode mineur (ensemble de fonctionalités locales au buffer courant.)
+
+(define-minor-mode
+  emoji-replace-mode
+  "Simple mode that replaces the known :emojis: by their graphic version"
+  :lighter " 😎"             ; mode status in mode line
+  (if emoji-replace-mode
+      (add-hook 'after-change-functions #'trigger-emoji-replace-insert nil t)
+    (remove-hook 'after-change-functions #'trigger-emoji-replace-insert t)
+    )
+  )
+
+;; 🐋 :gnu: 🦝
+;; (remove-hook 'after-change-functions #'trigger-emoji-replace-insert t)
+;; (symbol-value 'after-change-functions)
+
 
 ;;; emoji-replace.el ends here
