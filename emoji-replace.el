@@ -8,7 +8,7 @@
 (lisp-interaction-mode)
 (eros-mode)
 
-;; Le but est d'avoir un mode qui lorsque on tape un mot entre :, ce soit remplacé par l'émoji associé. 
+;; Le but est d'avoir un mode qui lorsque on tape un mot entre :, ce soit remplacé par l'émoji associé.
 ;; :bat: --> 🦇
 
 (cdr '(":ghost:" . 👻))                                  ; Etrangement on peut mettre le 👻 sans les quotes
@@ -21,7 +21,7 @@
 (setq emoji-list
       '(
         (":gnu:" . "🐃")
-        (":panda:" . "🐼") 
+        (":panda:" . "🐼")
         (":koala:" . "🐨")
         (":lion:" . "🦁")
         (":racoon:" . "🦝")
@@ -29,7 +29,7 @@
         (":snake:" . "🐍")
         (":whale:" . "🐋")
         (":sheep:" . "🐏")
-        (":gorilla:" . "🦍")        
+        (":gorilla:" . "🦍")
         (":elephant:" . "🐘")
         (":dolphin:" . "🐬")
         (":squid:" . "🦑")
@@ -41,6 +41,7 @@
 ;; (cdr (assoc ":gnu:" emoji-list))
 
 (defun emoji-replace-insert ()
+  "Remplace un tag d'emoji par cet emoji.  Doit être dans la liste `emoji-list'.  Exemple: `:gnu: ' est remplacé par 🐃."
   (interactive)
   (save-excursion
     (backward-char 1)  ; on considère que ce sera actif lors de la touche espace après avoir tapé :gnu:_
@@ -48,8 +49,8 @@
     (backward-word 1)  ; on revient sur la 1re lettre du mot clef
     (backward-char 1)  ; on recule sur le premier :
     (let* (
-           (word (buffer-substring-no-properties (point) (mark))) ; le mot + les `:' -> `:gnu:' 
-           (pair (assoc word emoji-list)))                        ; pair vaut une des paires, ex:(":gnu:", "🐃") ou nil si pas dans la liste 
+           (word (buffer-substring-no-properties (point) (mark))) ; le mot + les `:' -> `:gnu:'
+           (pair (assoc word emoji-list)))                        ; pair vaut une des paires, ex:(":gnu:", "🐃") ou nil si pas dans la liste
       ;; (message "word: %s, pair: %s" word pair)
       (if (not pair)
           nil                                                     ; ne fait rien si nil
@@ -59,6 +60,26 @@
       ))
   (deactivate-mark)  ; Cette fonction permet d'enlever la selection qui traine si le mot n'est pas trouvé dans la liste.
   )
+
+
+;; Emoji replace part 2 - hooks
+(defun trigger-emoji-replace-insert (begin end len)
+  ;; (message "beg: %s, end: %d, len: %d" begin end len)
+  (let ((s (buffer-substring begin end)))
+    (when (equal s " ")
+      ;; (message "trigger: [%s]" s)
+      (emoji-replace-insert)
+      )
+    )
+  )
+
+;; (add-hook 'after-change-functions #'trigger-emoji-replace-insert nil t)
+;; (remove-hook 'after-change-functions #'trigger-emoji-replace-insert)
+;; (symbol-value 'after-change-functions)
+;; (remove-hook 'after-change-functions (car
+;;  (symbol-value 'after-change-functions))
+;;  )
+;; The 👻 is talking to the 🐘.
 
 
 ;;
