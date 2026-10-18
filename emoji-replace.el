@@ -82,6 +82,38 @@
 ;; The 👻 is talking to the 🐘.
 
 
+;; Emoji replace part 3 - text properties
+;; l'overlay est juste une décoration sur le texte, mais il me modifie pas le buffer
+;; dans cet exemple, si je tape  :whale: , je vois une baleine mais le texte :whale: est toujours là.
+;; et l'emoji n'est pas réellement inséré dans le texte
+
+;; Savoir où on se trouve dans le texte courant
+;; (point)                                 ; 3508
+
+(defun emoji-replace-overlay (begin end len)
+  "Remplace un tag d'emoji par cet emoji visuellement.  Doit être dans la liste `emoji-list'.  Exemple: `:gnu: ' est remplacé par 🐃."
+  (let ((s (buffer-substring begin end)))
+    (when (equal s " ")
+      (save-excursion
+        (backward-char 1)  ; on considère que ce sera actif lors de la touche espace après avoir tapé :gnu:_
+        (set-mark (point)) ; on est sur le : après le mot clef, on mémorise ce `point'
+        (backward-word 1)  ; on revient sur la 1re lettre du mot clef
+        (backward-char 1)  ; on recule sur le premier :
+        (let* (
+               (word (buffer-substring-no-properties (point) (mark))) ; le mot + les `:' -> `:gnu:'
+               (pair (assoc word emoji-list)))                        ; pair vaut une des paires, ex:(":gnu:", "🐃") ou nil si pas dans la liste
+          (message "word: %s, pair: %s" word pair)
+          (when  pair
+            (put-text-property (point) (mark) 'display (cdr pair))  ; superpose l'emoji au text cachant celui-ci
+            )
+          ))))
+  (deactivate-mark)  ; Cette fonction permet d'enlever la selection qui traine si le mot n'est pas trouvé dans la liste.
+  )
+
+
+;; (add-hook 'after-change-functions #'emoji-replace-overlay nil t)
+;; (remove-hook 'after-change-functions #'emoji-replace-overlay)
+
 ;;
 
 ;;; emoji-replace.el ends here
