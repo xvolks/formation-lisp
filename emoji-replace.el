@@ -74,10 +74,10 @@
   )
 
 ;; (add-hook 'after-change-functions #'trigger-emoji-replace-insert nil t)
-;; (remove-hook 'after-change-functions #'trigger-emoji-replace-insert)
+;; (remove-hook 'after-change-functions #'trigger-emoji-replace-insert t)
 ;; (symbol-value 'after-change-functions)
 ;; (remove-hook 'after-change-functions (car
-;;  (symbol-value 'after-change-functions))
+;;  (symbol-value 'after-change-functions)) t
 ;;  )
 ;; The 👻 is talking to the 🐘.
 
