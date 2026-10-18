@@ -130,5 +130,33 @@
 ;; (remove-hook 'after-change-functions #'trigger-emoji-replace-insert t)
 ;; (symbol-value 'after-change-functions)
 
+;; Cleaning up our emoji mode
+
+(defvar emoji-replace-by-insert nil
+  "nil -> replace with overlay, t -> replace by insert")
+(defcustom emoji-replace-by-insert nil
+  "nil -> replace with overlay, t -> replace by insert")   ; M-x customize-variable permet de modifier les variables par défaut.
+(symbol-value emoji-replace-by-insert)
+
+
+(define-minor-mode
+  emoji-replace-mode
+  "Simple mode that replaces the known :emojis: by their graphic version"
+  :lighter " 😎"             ; mode status in mode line
+  (let ((func (if emoji-replace-by-insert
+                  #'trigger-emoji-replace-insert
+                #'emoji-replace-overlay
+                )))
+    (if emoji-replace-mode
+        (add-hook 'after-change-functions func nil t)
+      (remove-hook 'after-change-functions func t)
+      )
+    ))
+
+
+;;
+
+
+
 
 ;;; emoji-replace.el ends here
