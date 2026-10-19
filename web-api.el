@@ -5,6 +5,8 @@
 ;; Videos Learning Elisp 16 - using a web API et suivantes
 ;;; Code:
 
+
+(eros-mode)
 ;; using a web API
 (load-file "./key.el")                   ; Ne pas pousser la clef dans Github.
 (defvar key my-key)
@@ -42,13 +44,46 @@
                  (delete-region (point-min) (point))   ; Supprime les entêtes
                  (buffer-string)
                  ))
-         (json-resp (json-parse-string resp)))
-    json-resp
+         (json-resp (json-parse-string resp))          ; Parse le texte en objet JSON
+         (tmp (aref json-resp 0))                      ; La réponse est un tableau: on prend le 1er élément
+         (meta (gethash "meta" tmp))                   ; L'info est dans un objet `meta'
+         (syns (aref (gethash "syns" meta) 0))         ; Puis dans un objet `syns' -> tableau on prend le 1er
+         )
+    (mapcar #'identity syns)                           ; On transforme le tableau en liste Lisp et retoune
   ))
 
 (get-synonyms word)
 
-;;
+;; A Thesaurus mode
+
+;; (completing-read "Synonyme: " (get-synonyms "dork"))
+
+
+
+(defun word-to-syn (w)
+  "Remplace le mot courant par un synomyme choisi dans le retour du webservice.  `W' est inutilisé ici."
+  (interactive "p")
+  ;  (message "W: %s" w)
+  (let* (( word (current-word))
+         (word-list (get-synonyms word))
+         (new-word (completing-read "Remplace: " word-list))
+         )
+    (backward-word)
+    (kill-word 1)
+    (insert new-word)
+    ))
+
+;; My mate is a smart<M-x word-to-syn RET select sharp> -> sharp bird
+
+(define-minor-mode zsyn-mode
+  "Mode qui definit un raccourci pour remplacer un mot par son synonyme."
+  :keymap (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "C-c z") 'word-to-syn)
+                        map))
+
+(add-hook 'org-mode-hook 'zsyn-mode)
+
+;; Suite --> email.el
 
 
 ;;; web-api.el ends here
